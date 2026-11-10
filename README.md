@@ -1,6 +1,6 @@
 # TerraSpectra: Hyperspectral Crop Disease Forecasting
 
-## 🌱 About the Project
+##  About the Project
 
 TerraSpectra is an AI-based precision agriculture project for **early crop disease and crop stress detection using hyperspectral satellite images**.
 
@@ -8,13 +8,13 @@ Unlike normal RGB images, hyperspectral images contain hundreds of spectral band
 
 The project combines **3D-CNN, Vision Transformer, FastAPI, React, and Deck.gl**.
 
-## 🎯 Problem Statement
+##  Problem Statement
 
 Traditional crop monitoring mainly uses RGB or simple infrared images. These methods may detect diseases only after visible symptoms appear.
 
 TerraSpectra aims to detect early crop stress and disease by analyzing the spectral information available in hyperspectral images.
 
-## 💡 Proposed Solution
+##  Proposed Solution
 
 ```text
 Hyperspectral Data
@@ -34,7 +34,7 @@ FastAPI
 GIS Dashboard
 ```
 
-## 🧩 Main Modules
+##  Main Modules
 
 ### 1. Hyperspectral Data Processing
 
@@ -80,7 +80,7 @@ The React dashboard will use Deck.gl and Mapbox to display:
 - Risk statistics
 - Historical crop health
 
-## 🛠️ Technologies
+##  Technologies
 
 | Category | Technologies |
 |---|---|
@@ -94,51 +94,6 @@ The React dashboard will use Deck.gl and Mapbox to display:
 | GIS | Deck.gl, Mapbox |
 | Version Control | Git, GitHub |
 
-## 📅 Development Plan
-
-### Week 1
-**Data Processing + GIS Setup**
-
-- Hyperspectral data preparation
-- Rasterio/GDAL setup
-- PCA
-- React setup
-- Deck.gl and Mapbox integration
-
-### Week 2
-**3D-CNN + Disease Heatmap**
-
-- Prepare training dataset
-- Build 3D-CNN
-- Train and evaluate the model
-- Create disease-risk heatmap
-
-### Week 3
-**Vision Transformer + Analytics**
-
-- Integrate Vision Transformer
-- Build hybrid 3D-CNN + ViT model
-- Add analytics panel
-- Display risk statistics and spectral anomalies
-
-### Week 4
-**FastAPI + Tiling + Final Dashboard**
-
-- Integrate model with FastAPI
-- Implement raster tiling
-- GPU inference
-- Add historical timeline
-- Complete dashboard
-
-## 👥 Team
-
-| Member | Responsibility |
-|---|---|
-| Member 1 | Hyperspectral Data & Geospatial Pipeline |
-| Member 2 | 3D-CNN & Vision Transformer |
-| Member 3 | FastAPI, Inference & Tiling |
-| Member 4 | React GIS Dashboard |
-
 ## 📊 Expected Output
 
 TerraSpectra will provide an interactive platform that can:
@@ -149,22 +104,3 @@ TerraSpectra will provide an interactive platform that can:
 - Display affected areas on a GIS map
 - Show crop-risk statistics
 - View historical crop health
-
-## 🚀 Project Status
-
-**Current Phase: Week 1 – Project Setup**
-
-Development is currently starting with the data pipeline, machine-learning setup, backend structure, and GIS dashboard.
-
-## 📌 Future Improvements
-
-- Multi-temporal crop monitoring
-- More crop disease classes
-- Weather data integration
-- Satellite time-series analysis
-- Cloud-based processing
-- Large-scale farm monitoring
-
-## 📄 License
-
-This project is developed for academic and research purposes.
