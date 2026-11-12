@@ -1,4 +1,6 @@
 import StatCard from '../components/StatCard'
+import RiskOverview from '../components/RiskOverview'
+import AIInsight from '../components/AIInsight'
 
 const farmStats = [
   {
@@ -14,10 +16,16 @@ const farmStats = [
     icon: '🌱'
   },
   {
+    title: 'Moderate Risk',
+    value: '50 acres',
+    description: 'Requires monitoring',
+    icon: '🟡'
+  },
+  {
     title: 'High Risk',
     value: '100 acres',
     description: 'Requires attention',
-    icon: '⚠️'
+    icon: '🔴'
   },
   {
     title: 'Critical Zones',
@@ -33,6 +41,10 @@ export default function Dashboard() {
 
       <div className="page-heading">
         <div>
+          <span className="page-label">
+            TERRASPECTRA MONITORING
+          </span>
+
           <h2>Farm Health Dashboard</h2>
 
           <p>
@@ -58,20 +70,41 @@ export default function Dashboard() {
         ))}
       </section>
 
-      <section className="dashboard-placeholder">
-        <div>
-          <span className="placeholder-icon">
-            🗺️
-          </span>
+      <section className="map-section">
+        <div className="section-heading">
+          <div>
+            <h3>Farm Risk Map</h3>
+            <p>
+              Spatial visualization of crop disease risk
+            </p>
+          </div>
 
-          <h3>Farm Risk Map</h3>
+          <button className="map-control">
+            🗺️ View Full Map
+          </button>
+        </div>
 
-          <p>
-            Interactive hyperspectral disease-risk map
-            will be integrated here.
-          </p>
+        <div className="map-placeholder">
+          <div className="map-placeholder-content">
+            <span>🗺️</span>
+
+            <h3>Interactive Risk Map</h3>
+
+            <p>
+              Hyperspectral disease-risk visualization
+              will appear here.
+            </p>
+
+            <small>
+              Deck.gl + Mapbox integration coming next
+            </small>
+          </div>
         </div>
       </section>
+
+      <RiskOverview />
+
+      <AIInsight />
 
     </main>
   )
