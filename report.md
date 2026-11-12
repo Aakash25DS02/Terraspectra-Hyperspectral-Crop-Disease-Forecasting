@@ -78,4 +78,4 @@ This is the most demanding of the three scenes. It has many crop classes, and so
 
 ## Credits
 
-The datasets were collected and shared by the RSIDEA research group, Wuhan University. If you use them in your own work, please cite the original paper published in *Remote Sensing of Environment*.
+The datasets were collected and shared by the RSIDEA research group, Wuhan University. If you use them in your own work, please cite the original paper published in *Remote Sensing of Environment.
