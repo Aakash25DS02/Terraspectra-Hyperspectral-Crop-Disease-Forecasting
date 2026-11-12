@@ -1,0 +1,48 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Python virtual environments
+venv/
+.venv/
+env/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# React / Node
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+
+# Large datasets
+datasets/raw/*
+!datasets/raw/.gitkeep
+datasets/processed/*
+!datasets/processed/.gitkeep
+
+# Model checkpoints and weights
+*.pth
+*.pt
+*.ckpt
+*.onnx
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE and operating system
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
