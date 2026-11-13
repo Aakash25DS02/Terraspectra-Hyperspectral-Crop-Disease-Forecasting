@@ -597,3 +597,202 @@ button {
     min-height: 300px;
   }
 }
+
+/* ================================
+   DAY 3 - FARM RISK MAP
+================================ */
+
+.farm-map {
+  height: 520px;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #dce5dc;
+  background: #dfe8df;
+}
+
+.farm-map canvas {
+  outline: none;
+}
+
+.map-overlay {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 190px;
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+  z-index: 2;
+}
+
+.map-overlay h4 {
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  margin-top: 8px;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.legend-color.healthy {
+  background: #46a05a;
+}
+
+.legend-color.moderate {
+  background: #e6b432;
+}
+
+.legend-color.high {
+  background: #dc4646;
+}
+
+.map-error {
+  min-height: 520px;
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 30px;
+}
+
+.map-error h3 {
+  margin-bottom: 8px;
+}
+
+.map-error p {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 700px) {
+  .farm-map {
+    height: 400px;
+  }
+
+  .map-overlay {
+    top: 12px;
+    right: 12px;
+    width: 160px;
+  }
+}
+
+/* ================================
+   AI ASSISTANT
+================================ */
+
+.ai-chat-container {
+  max-width: 900px;
+  min-height: 500px;
+  margin-top: 25px;
+  padding: 40px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #dce5dc;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ai-welcome {
+  text-align: center;
+  max-width: 600px;
+  margin: auto;
+}
+
+.ai-large-icon {
+  font-size: 3.5rem;
+  margin-bottom: 15px;
+}
+
+.ai-welcome h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.ai-welcome p {
+  color: #6b7280;
+  line-height: 1.7;
+}
+
+.ai-input-area {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.ai-input-area input {
+  flex: 1;
+  padding: 14px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+.ai-input-area input:focus {
+  border-color: #4f8f5b;
+}
+
+.ai-input-area button {
+  padding: 14px 22px;
+  border: none;
+  border-radius: 10px;
+  background: #4f8f5b;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.ai-input-area button:hover {
+  opacity: 0.9;
+}
+
+/* ================================
+   AI RESPONSE
+================================ */
+
+.ai-response {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+  margin: 25px auto;
+  max-width: 750px;
+  padding: 18px;
+  border-radius: 12px;
+  background: #f0f7f1;
+  border: 1px solid #d6e6d8;
+}
+
+.ai-response-icon {
+  font-size: 1.8rem;
+}
+
+.ai-response strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.ai-response p {
+  margin: 0;
+  color: #4b5563;
+  line-height: 1.6;
+}

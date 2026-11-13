@@ -1,6 +1,7 @@
 import StatCard from '../components/StatCard'
 import RiskOverview from '../components/RiskOverview'
 import AIInsight from '../components/AIInsight'
+import FarmRiskMap from '../map/FarmRiskMap'
 
 const farmStats = [
   {
@@ -84,22 +85,7 @@ export default function Dashboard() {
           </button>
         </div>
 
-        <div className="map-placeholder">
-          <div className="map-placeholder-content">
-            <span>🗺️</span>
-
-            <h3>Interactive Risk Map</h3>
-
-            <p>
-              Hyperspectral disease-risk visualization
-              will appear here.
-            </p>
-
-            <small>
-              Deck.gl + Mapbox integration coming next
-            </small>
-          </div>
-        </div>
+        <FarmRiskMap />
       </section>
 
       <RiskOverview />
