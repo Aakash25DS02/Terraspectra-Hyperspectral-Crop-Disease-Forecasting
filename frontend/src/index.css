@@ -796,3 +796,148 @@ button {
   color: #4b5563;
   line-height: 1.6;
 }
+
+/* ================================
+   DAY 4 - SELECTED ZONE
+================================ */
+
+.zone-details {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  width: 300px;
+  padding: 18px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+  z-index: 3;
+}
+
+.zone-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.zone-details-header span {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #6b7280;
+}
+
+.zone-details-header h3 {
+  margin-top: 4px;
+  font-size: 1.4rem;
+}
+
+.zone-close {
+  border: none;
+  background: transparent;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.zone-risk {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.zone-risk div,
+.zone-info div {
+  padding: 12px;
+  border-radius: 10px;
+  background: #f5f7f5;
+}
+
+.zone-risk span,
+.zone-info span {
+  display: block;
+  font-size: 0.7rem;
+  color: #6b7280;
+  margin-bottom: 5px;
+}
+
+.zone-risk strong,
+.zone-info strong {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.zone-risk strong:first-of-type {
+  font-size: 1.2rem;
+}
+
+.risk-healthy {
+  color: #36884b;
+}
+
+.risk-moderate {
+  color: #c48d18;
+}
+
+.risk-high {
+  color: #d93636;
+}
+
+.zone-info {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.zone-ai-button {
+  width: 100%;
+  margin-top: 15px;
+  padding: 11px;
+  border: none;
+  border-radius: 9px;
+  background: #4f8f5b;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.zone-ai-button:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 700px) {
+  .zone-details {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    width: auto;
+  }
+}
+
+/* ================================
+   SELECTED ZONE AI CONTEXT
+================================ */
+
+.selected-zone-context {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  max-width: 750px;
+  margin: 20px auto 0;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #eef6ef;
+  border: 1px solid #d5e6d7;
+  color: #365c3d;
+  font-size: 0.85rem;
+}
+
+.selected-zone-context strong {
+  white-space: nowrap;
+}
+
+.selected-zone-context span {
+  color: #5f6f63;
+  white-space: nowrap;
+}

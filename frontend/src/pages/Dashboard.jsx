@@ -36,7 +36,7 @@ const farmStats = [
   }
 ]
 
-export default function Dashboard() {
+export default function Dashboard({ onAskAI }) {
   return (
     <main className="dashboard">
 
@@ -85,7 +85,7 @@ export default function Dashboard() {
           </button>
         </div>
 
-        <FarmRiskMap />
+        <FarmRiskMap onAskAI={onAskAI} />
       </section>
 
       <RiskOverview />

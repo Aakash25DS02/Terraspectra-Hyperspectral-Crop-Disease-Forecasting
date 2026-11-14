@@ -6,6 +6,12 @@ import AIAssistant from './pages/AIAssistant'
 
 function App() {
   const [activePage, setActivePage] = useState('dashboard')
+  const [selectedZone, setSelectedZone] = useState(null)
+
+  const openAIForZone = (zone) => {
+    setSelectedZone(zone)
+    setActivePage('ai')
+  }
 
   return (
     <div className="app">
@@ -17,9 +23,17 @@ function App() {
           setActivePage={setActivePage}
         />
 
-        {activePage === 'dashboard' && <Dashboard />}
+        {activePage === 'dashboard' && (
+          <Dashboard
+            onAskAI={openAIForZone}
+          />
+        )}
 
-        {activePage === 'ai' && <AIAssistant />}
+        {activePage === 'ai' && (
+          <AIAssistant
+            selectedZone={selectedZone}
+          />
+        )}
       </div>
     </div>
   )
