@@ -117,13 +117,22 @@ function getRiskColor (risk) {
 
 export default function FarmRiskMap ({ onAskAI }) {
   const [selectedZone, setSelectedZone] = useState(null)
-
+  const [riskFilter, setRiskFilter] = useState('all')
+  const filteredZones = {
+    type: 'FeatureCollection',
+    features:
+      riskFilter === 'all'
+        ? farmZones.features
+        : farmZones.features.filter(
+            feature => feature.properties.risk === riskFilter
+          )
+  }
   const layers = useMemo(() => {
     return [
       new GeoJsonLayer({
         id: 'farm-risk-zones',
 
-        data: farmZones,
+        data: filteredZones,
 
         filled: true,
         stroked: true,
@@ -172,7 +181,7 @@ export default function FarmRiskMap ({ onAskAI }) {
         }
       })
     ]
-  }, [selectedZone])
+  }, [selectedZone, riskFilter])
 
   const initialViewState = {
     longitude: 76.91,
@@ -197,6 +206,54 @@ export default function FarmRiskMap ({ onAskAI }) {
 
   return (
     <div className='farm-map'>
+      <div className='risk-filter'>
+        <div className='risk-filter-title'>
+          <span>Risk Filter</span>
+          <strong>{filteredZones.features.length} zones</strong>
+        </div>
+
+        <div className='risk-filter-buttons'>
+          <button
+            className={riskFilter === 'all' ? 'active' : ''}
+            onClick={() => {
+              setRiskFilter('all')
+              setSelectedZone(null)
+            }}
+          >
+            All
+          </button>
+
+          <button
+            className={riskFilter === 'healthy' ? 'active healthy' : ''}
+            onClick={() => {
+              setRiskFilter('healthy')
+              setSelectedZone(null)
+            }}
+          >
+            🌱 Healthy
+          </button>
+
+          <button
+            className={riskFilter === 'moderate' ? 'active moderate' : ''}
+            onClick={() => {
+              setRiskFilter('moderate')
+              setSelectedZone(null)
+            }}
+          >
+            🟡 Moderate
+          </button>
+
+          <button
+            className={riskFilter === 'high' ? 'active high' : ''}
+            onClick={() => {
+              setRiskFilter('high')
+              setSelectedZone(null)
+            }}
+          >
+            🔴 High
+          </button>
+        </div>
+      </div>
       <DeckGL
         initialViewState={initialViewState}
         controller={true}
