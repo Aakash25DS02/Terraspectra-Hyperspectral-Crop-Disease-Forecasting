@@ -118,14 +118,17 @@ function getRiskColor (risk) {
 export default function FarmRiskMap ({ onAskAI }) {
   const [selectedZone, setSelectedZone] = useState(null)
   const [riskFilter, setRiskFilter] = useState('all')
+  const [minRiskScore, setMinRiskScore] = useState(0)
   const filteredZones = {
     type: 'FeatureCollection',
-    features:
-      riskFilter === 'all'
-        ? farmZones.features
-        : farmZones.features.filter(
-            feature => feature.properties.risk === riskFilter
-          )
+    features: farmZones.features.filter(feature => {
+      const matchesRisk =
+        riskFilter === 'all' || feature.properties.risk === riskFilter
+
+      const matchesScore = feature.properties.score >= minRiskScore
+
+      return matchesRisk && matchesScore
+    })
   }
   const layers = useMemo(() => {
     return [
@@ -181,7 +184,7 @@ export default function FarmRiskMap ({ onAskAI }) {
         }
       })
     ]
-  }, [selectedZone, riskFilter])
+  }, [selectedZone, riskFilter, minRiskScore])
 
   const initialViewState = {
     longitude: 76.91,
@@ -253,6 +256,40 @@ export default function FarmRiskMap ({ onAskAI }) {
             🔴 High
           </button>
         </div>
+        <div className='risk-score-filter'>
+          <div className='risk-score-header'>
+            <span>Minimum Risk Score</span>
+            <strong>{minRiskScore}%</strong>
+          </div>
+
+          <input
+            type='range'
+            min='0'
+            max='100'
+            step='1'
+            value={minRiskScore}
+            onChange={event => {
+              setMinRiskScore(Number(event.target.value))
+              setSelectedZone(null)
+            }}
+          />
+
+          <div className='risk-score-scale'>
+            <span>0%</span>
+            <span>50%</span>
+            <span>100%</span>
+          </div>
+        </div>
+        <button
+          className='reset-risk-filter'
+          onClick={() => {
+            setRiskFilter('all')
+            setMinRiskScore(0)
+            setSelectedZone(null)
+          }}
+        >
+          ↻ Reset Filters
+        </button>
       </div>
       <DeckGL
         initialViewState={initialViewState}

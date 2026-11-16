@@ -1031,3 +1031,63 @@ button {
     flex: 1;
   }
 }
+
+/* ================================
+   DAY 5 - ADVANCED RISK FILTER
+================================ */
+
+.risk-score-filter {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.risk-score-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.risk-score-header span {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.risk-score-header strong {
+  font-size: 0.78rem;
+  color: #365c3d;
+}
+
+.risk-score-filter input[type='range'] {
+  width: 100%;
+  accent-color: #4f8f5b;
+  cursor: pointer;
+}
+
+.risk-score-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2px;
+  font-size: 0.65rem;
+  color: #9ca3af;
+}
+
+.reset-risk-filter {
+  width: 100%;
+  margin-top: 12px;
+  padding: 8px;
+  border: 1px solid #dce5dc;
+  border-radius: 7px;
+  background: #f8faf8;
+  color: #365c3d;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.reset-risk-filter:hover {
+  background: #eef6ef;
+  border-color: #4f8f5b;
+}
