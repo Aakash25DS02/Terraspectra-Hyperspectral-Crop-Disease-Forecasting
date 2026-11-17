@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Map from 'react-map-gl/mapbox'
 import DeckGL from '@deck.gl/react'
 import { GeoJsonLayer } from '@deck.gl/layers'
@@ -115,10 +115,27 @@ function getRiskColor (risk) {
   return [70, 160, 90, 150]
 }
 
-export default function FarmRiskMap ({ onAskAI }) {
+export default function FarmRiskMap ({
+  onAskAI,
+  externalRiskFilter = 'all',
+  externalSelectedZone = null
+}) {
   const [selectedZone, setSelectedZone] = useState(null)
   const [riskFilter, setRiskFilter] = useState('all')
   const [minRiskScore, setMinRiskScore] = useState(0)
+  useEffect(() => {
+  setRiskFilter(externalRiskFilter)
+}, [externalRiskFilter])
+
+useEffect(() => {
+  if (externalSelectedZone) {
+    const zone = farmZones.features.find(
+      feature => feature.properties.zone === externalSelectedZone
+    )
+
+    setSelectedZone(zone || null)
+  }
+}, [externalSelectedZone])
   const filteredZones = {
     type: 'FeatureCollection',
     features: farmZones.features.filter(feature => {

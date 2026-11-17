@@ -2,6 +2,7 @@ import StatCard from '../components/StatCard'
 import RiskOverview from '../components/RiskOverview'
 import AIInsight from '../components/AIInsight'
 import FarmRiskMap from '../map/FarmRiskMap'
+import RiskAnalytics from '../components/RiskAnalytics'
 
 const farmStats = [
   {
@@ -36,31 +37,32 @@ const farmStats = [
   }
 ]
 
-export default function Dashboard({ onAskAI }) {
+export default function Dashboard ({
+  onAskAI,
+  onRiskSelect,
+  onZoneSelect,
+  mapRiskFilter,
+  mapSelectedZone
+}) {
   return (
-    <main className="dashboard">
-
-      <div className="page-heading">
+    <main className='dashboard'>
+      <div className='page-heading'>
         <div>
-          <span className="page-label">
-            TERRASPECTRA MONITORING
-          </span>
+          <span className='page-label'>TERRASPECTRA MONITORING</span>
 
           <h2>Farm Health Dashboard</h2>
 
-          <p>
-            Monitor crop health using hyperspectral analysis
-          </p>
+          <p>Monitor crop health using hyperspectral analysis</p>
         </div>
 
-        <div className="date-info">
+        <div className='date-info'>
           <span>Last Updated</span>
           <strong>Today</strong>
         </div>
       </div>
 
-      <section className="stats-grid">
-        {farmStats.map((stat) => (
+      <section className='stats-grid'>
+        {farmStats.map(stat => (
           <StatCard
             key={stat.title}
             title={stat.title}
@@ -71,27 +73,28 @@ export default function Dashboard({ onAskAI }) {
         ))}
       </section>
 
-      <section className="map-section">
-        <div className="section-heading">
+      <section className='map-section'>
+        <div className='section-heading'>
           <div>
             <h3>Farm Risk Map</h3>
-            <p>
-              Spatial visualization of crop disease risk
-            </p>
+            <p>Spatial visualization of crop disease risk</p>
           </div>
 
-          <button className="map-control">
-            🗺️ View Full Map
-          </button>
+          <button className='map-control'>🗺️ View Full Map</button>
         </div>
 
-        <FarmRiskMap onAskAI={onAskAI} />
+        <FarmRiskMap
+          onAskAI={onAskAI}
+          externalRiskFilter={mapRiskFilter}
+          externalSelectedZone={mapSelectedZone}
+        />
       </section>
 
       <RiskOverview />
 
-      <AIInsight />
+      <RiskAnalytics onRiskSelect={onRiskSelect} onZoneSelect={onZoneSelect} />
 
+      <AIInsight />
     </main>
   )
 }
