@@ -3,35 +3,61 @@ import RiskOverview from '../components/RiskOverview'
 import AIInsight from '../components/AIInsight'
 import FarmRiskMap from '../map/FarmRiskMap'
 import RiskAnalytics from '../components/RiskAnalytics'
+import { farmZones } from '../data/farmData'
+
+const totalArea = farmZones.reduce(
+  (total, zone) => total + zone.area,
+  0
+)
+
+const healthyArea = farmZones
+  .filter(zone => zone.risk === 'healthy')
+  .reduce((total, zone) => total + zone.area, 0)
+
+const moderateArea = farmZones
+  .filter(zone => zone.risk === 'moderate')
+  .reduce((total, zone) => total + zone.area, 0)
+
+const highRiskArea = farmZones
+  .filter(zone => zone.risk === 'high')
+  .reduce((total, zone) => total + zone.area, 0)
+
+const criticalZones = farmZones.filter(
+  zone => zone.score >= 80
+).length
+
+const healthyPercentage = Math.round(
+  (healthyArea / totalArea) * 100
+)
 
 const farmStats = [
   {
     title: 'Total Farm Area',
-    value: '1,000 acres',
+    value: `${totalArea.toLocaleString()} acres`,
     description: 'Monitored area',
     icon: '🌾'
   },
   {
     title: 'Healthy Area',
-    value: '720 acres',
-    description: '72% of total area',
+    value: `${healthyArea} acres`,
+    description: `${healthyPercentage}% of total area`,
     icon: '🌱'
   },
   {
     title: 'Moderate Risk',
-    value: '50 acres',
+    value: `${moderateArea} acres`,
     description: 'Requires monitoring',
     icon: '🟡'
   },
   {
     title: 'High Risk',
-    value: '100 acres',
+    value: `${highRiskArea} acres`,
     description: 'Requires attention',
     icon: '🔴'
   },
   {
     title: 'Critical Zones',
-    value: '8',
+    value: `${criticalZones}`,
     description: 'High priority areas',
     icon: '🚨'
   }

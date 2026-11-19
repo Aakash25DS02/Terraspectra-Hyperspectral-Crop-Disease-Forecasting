@@ -1,30 +1,50 @@
+import { farmZones } from '../data/farmData'
+
+const totalZones = farmZones.length
+
+const healthyZones = farmZones.filter(
+  zone => zone.risk === 'healthy'
+).length
+
+const moderateZones = farmZones.filter(
+  zone => zone.risk === 'moderate'
+).length
+
+const highZones = farmZones.filter(
+  zone => zone.risk === 'high'
+).length
+
 const riskData = [
   {
     label: 'Healthy',
-    value: 2,
-    percentage: 50,
+    value: healthyZones,
+    percentage: Math.round((healthyZones / totalZones) * 100),
     icon: '🌱'
   },
   {
     label: 'Moderate',
-    value: 1,
-    percentage: 25,
+    value: moderateZones,
+    percentage: Math.round((moderateZones / totalZones) * 100),
     icon: '🟡'
   },
   {
     label: 'High',
-    value: 1,
-    percentage: 25,
+    value: highZones,
+    percentage: Math.round((highZones / totalZones) * 100),
     icon: '🔴'
   }
 ]
 
-const zoneScores = [
-  { zone: 'Zone A', score: 18, risk: 'Healthy' },
-  { zone: 'Zone B', score: 52, risk: 'Moderate' },
-  { zone: 'Zone C', score: 87, risk: 'High' },
-  { zone: 'Zone D', score: 22, risk: 'Healthy' }
-]
+const zoneScores = farmZones.map(zone => ({
+  zone: zone.zone,
+  score: zone.score,
+  risk:
+    zone.risk === 'healthy'
+      ? 'Healthy'
+      : zone.risk === 'moderate'
+        ? 'Moderate'
+        : 'High'
+}))
 
 export default function RiskAnalytics ({ onRiskSelect, onZoneSelect }) {
   return (
@@ -96,11 +116,17 @@ export default function RiskAnalytics ({ onRiskSelect, onZoneSelect }) {
         <div>
           <span>AI MONITORING SUMMARY</span>
 
-          <h4>1 high-risk zone requires immediate attention</h4>
+          <h4>
+            {highZones} high-risk zone{highZones !== 1 ? 's' : ''} requires
+            immediate attention
+          </h4>
 
           <p>
-            Zone C currently has the highest disease-risk score at 87%. Two
-            zones are healthy, while one zone requires continued monitoring.
+            {farmZones.find(zone => zone.risk === 'high')?.zone} currently has
+            the highest disease-risk score at{' '}
+            {Math.max(...farmZones.map(zone => zone.score))}%.{' '}
+            {healthyZones} zones are healthy, while {moderateZones} zone
+            {moderateZones !== 1 ? 's' : ''} require continued monitoring.
           </p>
         </div>
       </div>
