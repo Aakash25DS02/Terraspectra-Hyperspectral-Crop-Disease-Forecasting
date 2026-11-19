@@ -68,6 +68,17 @@ button {
   background: #22c55e;
 }
 
+.status-dot.checking {
+  background: #f0ad4e;
+}
+
+.status-dot.online {
+  background: #28a745;
+}
+
+.status-dot.offline {
+  background: #dc3545;
+}
 /* MAIN LAYOUT */
 
 .main-layout {
