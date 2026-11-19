@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Map, ScanSearch, Waves, Database,
   Bell, Search, ChevronDown, Leaf, Activity, AlertTriangle,
-  ArrowUpRight, TrendingUp, Layers, Sprout, Microscope,
+  ArrowUpRight, TrendingUp, Layers, Microscope,
   Satellite, ShieldCheck, CircleDot, FlaskConical
 } from "lucide-react";
 import {
@@ -22,7 +21,7 @@ const navigation = [
   { name: "Dataset Explorer", icon: Database },
 ];
 
-// Illustrative spectral data for dashboard preview
+// Illustrative spectral data
 const spectralData = [
   { band: "450", healthy: 28, stressed: 36 },
   { band: "500", healthy: 35, stressed: 41 },
@@ -568,12 +567,18 @@ function SpectralPage() {
 }
 
 // DATASET EXPLORER PAGE
-function DatasetPage() {
+function DatasetPage({ datasetInfo, datasetStatus }) {
+  const dataset = datasetInfo?.dataset;
+
+  const classEntries = dataset?.class_distribution
+    ? Object.entries(dataset.class_distribution)
+    : [];
+
   return (
     <SectionPage
       title="Dataset Explorer"
       eyebrow="DATA INTELLIGENCE"
-      description="A central workspace for hyperspectral datasets, metadata, and validation."
+      description="Explore the connected hyperspectral dataset, its dimensions, and class distribution."
       icon={Database}
     >
       <div className="feature-grid">
@@ -585,12 +590,15 @@ function DatasetPage() {
           <h2>Dataset Registry</h2>
 
           <p className="panel-description">
-            Dataset records and metadata will be connected after
-            the data inventory and ingestion workflow are ready.
+            Live metadata retrieved from the TerraSpectra FastAPI backend.
           </p>
 
           <span className="status-chip">
-            Data integration pending
+            {datasetStatus === "connected"
+              ? "Dataset connected"
+              : datasetStatus === "loading"
+                ? "Loading dataset information"
+                : "Dataset connection unavailable"}
           </span>
         </div>
 
@@ -602,12 +610,13 @@ function DatasetPage() {
           <h2>Quality & Validation</h2>
 
           <p className="panel-description">
-            Explore missing values, spectral dimensions, labels,
-            and train-validation-test splits once verified datasets are integrated.
+            Dataset dimensions, label counts, and class distribution are read
+            from the dataset metadata endpoint. Model validation is a separate
+            step and is not represented by these metadata values.
           </p>
 
           <span className="status-chip">
-            Validation pending
+            {dataset ? "Metadata retrieved" : "Awaiting dataset metadata"}
           </span>
         </div>
       </div>
@@ -616,18 +625,133 @@ function DatasetPage() {
         <div className="panel-heading">
           <div>
             <p className="eyebrow">DATA INVENTORY</p>
-            <h2>Dataset connection status</h2>
+            <h2>Connected dataset information</h2>
           </div>
+
+          <span className="panel-tag">
+            {datasetStatus === "connected" ? "LIVE API DATA" : "API STATUS"}
+          </span>
         </div>
 
-        <div className="empty-state">
-          <Database size={30} />
-          <strong>No live dataset connected yet</strong>
-          <p>
-            This panel will populate when the dataset module is integrated.
-          </p>
-        </div>
+        {datasetStatus === "loading" && (
+          <div className="empty-state">
+            <Database size={30} />
+            <strong>Loading dataset information...</strong>
+            <p>Contacting the TerraSpectra backend.</p>
+          </div>
+        )}
+
+        {datasetStatus === "error" && (
+          <div className="empty-state">
+            <AlertTriangle size={30} />
+            <strong>Could not load dataset information</strong>
+            <p>
+              Make sure the FastAPI backend is running and refresh the page.
+            </p>
+          </div>
+        )}
+
+        {dataset && (
+          <>
+            <div className="stats-grid" style={{ marginTop: "20px" }}>
+              <div className="stat-card">
+                <span>Total samples</span>
+                <div className="stat-value">
+                  {dataset.total_samples}
+                </div>
+              </div>
+
+              <div className="stat-card">
+                <span>Image dimensions</span>
+                <div className="stat-value small-value">
+                  {dataset.image_height} × {dataset.image_width}
+                </div>
+              </div>
+
+              <div className="stat-card">
+                <span>Spectral bands</span>
+                <div className="stat-value">
+                  {dataset.spectral_bands}
+                </div>
+              </div>
+
+              <div className="stat-card">
+                <span>Classes</span>
+                <div className="stat-value">
+                  {Object.keys(dataset.classes || {}).length}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ marginTop: "28px" }}>
+              <div className="panel-heading">
+                <div>
+                  <p className="eyebrow">LABEL OVERVIEW</p>
+                  <h2>Crop-health class distribution</h2>
+                </div>
+              </div>
+
+              <div style={{
+                display: "grid",
+                gap: "14px",
+                marginTop: "18px"
+              }}>
+                {classEntries.map(([className, count]) => {
+                  const percentage = dataset.total_samples
+                    ? (count / dataset.total_samples) * 100
+                    : 0;
+
+                  return (
+                    <div key={className}>
+                      <div style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        gap: "12px",
+                        marginBottom: "7px",
+                        fontSize: "13px"
+                      }}>
+                        <strong style={{ textTransform: "capitalize" }}>
+                          {className.replace(/_/g, " ")}
+                        </strong>
+
+                        <span>
+                          {count} samples ({percentage.toFixed(1)}%)
+                        </span>
+                      </div>
+
+                      <div style={{
+                        height: "9px",
+                        borderRadius: "20px",
+                        background: "rgba(130, 160, 140, 0.16)",
+                        overflow: "hidden"
+                      }}>
+                        <div style={{
+                          width: `${percentage}%`,
+                          height: "100%",
+                          borderRadius: "20px",
+                          background: "linear-gradient(90deg, #55d99a, #8be0b5)"
+                        }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="feature-chips" style={{ marginTop: "24px" }}>
+              <span>Labels: {dataset.labels_count}</span>
+              <span>Wavelength values: {dataset.wavelength_count}</span>
+              <span>Format: HDF5</span>
+            </div>
+          </>
+        )}
       </div>
+
+      <p className="demo-note">
+        Dataset metadata is retrieved from the connected local backend.
+        The supplied dataset is synthetic and does not establish
+        real-world disease-detection accuracy.
+      </p>
     </SectionPage>
   );
 }
@@ -637,11 +761,15 @@ function App() {
   const [active, setActive] = useState("Overview");
   const [search, setSearch] = useState("");
 
-  // State for information received from FastAPI
+  // Dashboard API state
   const [backendSummary, setBackendSummary] = useState(null);
   const [apiStatus, setApiStatus] = useState("loading");
 
-  // Fetch dashboard information when React loads
+  // Dataset API state
+  const [datasetInfo, setDatasetInfo] = useState(null);
+  const [datasetStatus, setDatasetStatus] = useState("loading");
+
+  // Fetch dashboard information
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/v1/dashboard/summary")
       .then((response) => {
@@ -661,13 +789,38 @@ function App() {
       });
   }, []);
 
+  // Fetch actual dataset metadata from FastAPI
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/v1/dataset/info")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Dataset API request failed");
+        }
+
+        return response.json();
+      })
+      .then((data) => {
+        setDatasetInfo(data);
+        setDatasetStatus("connected");
+      })
+      .catch((error) => {
+        console.error("Dataset API connection error:", error);
+        setDatasetStatus("error");
+      });
+  }, []);
+
   // Page navigation
   const pageMap = {
     "Overview": <Overview />,
     "GIS Monitoring": <GISPage />,
     "Disease Detection": <DiseasePage />,
     "Spectral Analysis": <SpectralPage />,
-    "Dataset Explorer": <DatasetPage />
+    "Dataset Explorer": (
+      <DatasetPage
+        datasetInfo={datasetInfo}
+        datasetStatus={datasetStatus}
+      />
+    )
   };
 
   return (
@@ -754,7 +907,7 @@ function App() {
 
         <div className="content-area">
 
-          {/* LIVE BACKEND CONNECTION PANEL */}
+          {/* BACKEND CONNECTION PANEL */}
           <div
             style={{
               background: "rgba(80, 180, 110, 0.08)",
@@ -774,13 +927,11 @@ function App() {
                 Backend API Connection
               </strong>
 
-              <div
-                style={{
-                  fontSize: "12px",
-                  opacity: 0.75,
-                  marginTop: "5px"
-                }}
-              >
+              <div style={{
+                fontSize: "12px",
+                opacity: 0.75,
+                marginTop: "5px"
+              }}>
                 {apiStatus === "loading" &&
                   "Connecting to TerraSpectra API..."}
 
@@ -792,34 +943,30 @@ function App() {
               </div>
             </div>
 
-            <div
-              style={{
-                fontSize: "12px",
-                fontWeight: "600",
-                color:
-                  apiStatus === "connected"
-                    ? "#65d995"
-                    : apiStatus === "error"
-                      ? "#ff7777"
-                      : "#e6bb65"
-              }}
-            >
+            <div style={{
+              fontSize: "12px",
+              fontWeight: "600",
+              color:
+                apiStatus === "connected"
+                  ? "#65d995"
+                  : apiStatus === "error"
+                    ? "#ff7777"
+                    : "#e6bb65"
+            }}>
               {apiStatus === "connected" && "● CONNECTED"}
               {apiStatus === "loading" && "● CONNECTING"}
               {apiStatus === "error" && "● DISCONNECTED"}
             </div>
 
             {backendSummary && (
-              <div
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  gap: "25px",
-                  flexWrap: "wrap",
-                  fontSize: "12px",
-                  opacity: 0.85
-                }}
-              >
+              <div style={{
+                width: "100%",
+                display: "flex",
+                gap: "25px",
+                flexWrap: "wrap",
+                fontSize: "12px",
+                opacity: 0.85
+              }}>
                 <span>
                   Dataset: {backendSummary.dataset_status}
                 </span>
