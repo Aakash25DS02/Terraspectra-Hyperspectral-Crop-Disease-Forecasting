@@ -1,5 +1,9 @@
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from ml.preprocessing.dataset_loader import get_dataset_info
+
 
 app = FastAPI(
     title="TerraSpectra API",
@@ -42,4 +46,12 @@ def dashboard_summary():
         "total_samples": 0,
         "diseases_detected": 0,
         "message": "Backend is ready for dataset and model integration.",
+    }
+
+
+@app.get("/api/v1/dataset/info")
+def dataset_information():
+    return {
+        "status": "success",
+        "dataset": get_dataset_info(),
     }
