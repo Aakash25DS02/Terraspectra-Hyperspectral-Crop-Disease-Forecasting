@@ -3,106 +3,50 @@ import Map from 'react-map-gl/mapbox'
 import DeckGL from '@deck.gl/react'
 import { GeoJsonLayer } from '@deck.gl/layers'
 import 'mapbox-gl/dist/mapbox-gl.css'
+import { farmZones } from '../data/farmData'
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
+const zoneGeometry = {
+  'Zone A': [
+    [
+      [76.9, 11.02],
+      [76.91, 11.02],
+      [76.91, 11.03],
+      [76.9, 11.03],
+      [76.9, 11.02]
+    ]
+  ],
 
-const farmZones = {
-  type: 'FeatureCollection',
-  features: [
-    {
-      type: 'Feature',
-      properties: {
-        zone: 'Zone A',
-        risk: 'healthy',
-        score: 18,
-        disease: 'Low',
-        status: 'Healthy'
-      },
-      geometry: {
-        type: 'Polygon',
-        coordinates: [
-          [
-            [76.9, 11.02],
-            [76.91, 11.02],
-            [76.91, 11.03],
-            [76.9, 11.03],
-            [76.9, 11.02]
-          ]
-        ]
-      }
-    },
+  'Zone B': [
+    [
+      [76.91, 11.02],
+      [76.92, 11.02],
+      [76.92, 11.03],
+      [76.91, 11.03],
+      [76.91, 11.02]
+    ]
+  ],
 
-    {
-      type: 'Feature',
-      properties: {
-        zone: 'Zone B',
-        risk: 'moderate',
-        score: 52,
-        disease: 'Moderate',
-        status: 'Requires Monitoring'
-      },
-      geometry: {
-        type: 'Polygon',
-        coordinates: [
-          [
-            [76.91, 11.02],
-            [76.92, 11.02],
-            [76.92, 11.03],
-            [76.91, 11.03],
-            [76.91, 11.02]
-          ]
-        ]
-      }
-    },
+  'Zone C': [
+    [
+      [76.9, 11.03],
+      [76.91, 11.03],
+      [76.91, 11.04],
+      [76.9, 11.04],
+      [76.9, 11.03]
+    ]
+  ],
 
-    {
-      type: 'Feature',
-      properties: {
-        zone: 'Zone C',
-        risk: 'high',
-        score: 87,
-        disease: 'High',
-        status: 'Requires Attention'
-      },
-      geometry: {
-        type: 'Polygon',
-        coordinates: [
-          [
-            [76.9, 11.03],
-            [76.91, 11.03],
-            [76.91, 11.04],
-            [76.9, 11.04],
-            [76.9, 11.03]
-          ]
-        ]
-      }
-    },
-
-    {
-      type: 'Feature',
-      properties: {
-        zone: 'Zone D',
-        risk: 'healthy',
-        score: 22,
-        disease: 'Low',
-        status: 'Healthy'
-      },
-      geometry: {
-        type: 'Polygon',
-        coordinates: [
-          [
-            [76.91, 11.03],
-            [76.92, 11.03],
-            [76.92, 11.04],
-            [76.91, 11.04],
-            [76.91, 11.03]
-          ]
-        ]
-      }
-    }
+  'Zone D': [
+    [
+      [76.91, 11.03],
+      [76.92, 11.03],
+      [76.92, 11.04],
+      [76.91, 11.04],
+      [76.91, 11.03]
+    ]
   ]
 }
-
 function getRiskColor (risk) {
   if (risk === 'high') {
     return [220, 70, 70, 150]
@@ -124,21 +68,39 @@ export default function FarmRiskMap ({
   const [riskFilter, setRiskFilter] = useState('all')
   const [minRiskScore, setMinRiskScore] = useState(0)
   useEffect(() => {
-  setRiskFilter(externalRiskFilter)
-}, [externalRiskFilter])
+    setRiskFilter(externalRiskFilter)
+  }, [externalRiskFilter])
 
-useEffect(() => {
-  if (externalSelectedZone) {
-    const zone = farmZones.features.find(
-      feature => feature.properties.zone === externalSelectedZone
-    )
+  const farmZoneFeatures = farmZones.map(zone => ({
+    type: 'Feature',
+    properties: {
+      zone: zone.zone,
+      risk: zone.risk,
+      score: zone.score,
+      disease: zone.disease,
+      status: zone.status
+    },
+    geometry: {
+      type: 'Polygon',
+      coordinates: zoneGeometry[zone.zone]
+    }
+  }))
 
-    setSelectedZone(zone || null)
-  }
-}, [externalSelectedZone])
+  useEffect(() => {
+    if (externalSelectedZone) {
+      const zone = farmZoneFeatures.find(
+        feature => feature.properties.zone === externalSelectedZone
+      )
+
+      setSelectedZone(zone || null)
+    } else {
+      setSelectedZone(null)
+    }
+  }, [externalSelectedZone])
+
   const filteredZones = {
     type: 'FeatureCollection',
-    features: farmZones.features.filter(feature => {
+    features: farmZoneFeatures.filter(feature => {
       const matchesRisk =
         riskFilter === 'all' || feature.properties.risk === riskFilter
 
@@ -147,6 +109,7 @@ useEffect(() => {
       return matchesRisk && matchesScore
     })
   }
+
   const layers = useMemo(() => {
     return [
       new GeoJsonLayer({
