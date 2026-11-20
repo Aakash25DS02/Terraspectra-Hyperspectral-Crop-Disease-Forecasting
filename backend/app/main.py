@@ -39,13 +39,20 @@ def health_check():
 
 @app.get("/api/v1/dashboard/summary")
 def dashboard_summary():
+    dataset = get_dataset_info()
+
     return {
         "project": "TerraSpectra",
-        "dataset_status": "awaiting_dataset",
+        "dataset_status": "available",
         "model_status": "integration_pending",
-        "total_samples": 0,
+        "total_samples": dataset["total_samples"],
+        "spectral_bands": dataset["spectral_bands"],
+        "number_of_classes": len(dataset["classes"]),
         "diseases_detected": 0,
-        "message": "Backend is ready for dataset and model integration.",
+        "message": (
+            "Dataset loaded successfully. "
+            "ML model integration is pending."
+        ),
     }
 
 
@@ -54,4 +61,29 @@ def dataset_information():
     return {
         "status": "success",
         "dataset": get_dataset_info(),
+    }
+
+
+@app.get("/api/v1/model/status")
+def model_status():
+    return {
+        "status": "pending",
+        "framework": "PyTorch",
+        "framework_version": "2.15.0",
+        "device": "cpu",
+        "models": {
+            "3d_cnn": {
+                "filename": "cnn3d_best.pth",
+                "status": "awaiting_model_files",
+            },
+            "vision_transformer": {
+                "filename": "vit_best.pth",
+                "status": "awaiting_model_files",
+            },
+        },
+        "input_specification": "awaiting_final_confirmation",
+        "message": (
+            "Backend is being prepared for ML model integration. "
+            "No trained model is loaded yet."
+        ),
     }
