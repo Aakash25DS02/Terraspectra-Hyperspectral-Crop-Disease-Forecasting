@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from ml.preprocessing.dataset_loader import get_dataset_info
+from backend.app.services.model_service import get_model_status
 
 
 app = FastAPI(
@@ -66,24 +67,16 @@ def dataset_information():
 
 @app.get("/api/v1/model/status")
 def model_status():
+    model_information = get_model_status()
+
     return {
-        "status": "pending",
+        **model_information,
         "framework": "PyTorch",
         "framework_version": "2.15.0",
         "device": "cpu",
-        "models": {
-            "3d_cnn": {
-                "filename": "cnn3d_best.pth",
-                "status": "awaiting_model_files",
-            },
-            "vision_transformer": {
-                "filename": "vit_best.pth",
-                "status": "awaiting_model_files",
-            },
-        },
         "input_specification": "awaiting_final_confirmation",
         "message": (
-            "Backend is being prepared for ML model integration. "
-            "No trained model is loaded yet."
+            "Model checkpoint availability checked successfully. "
+            "Trained model loading and inference are not yet configured."
         ),
     }

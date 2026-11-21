@@ -1,9 +1,14 @@
 
 import unittest
+import tempfile
+
+from pathlib import Path
+from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
 from backend.app.main import app
+from backend.app.services.model_service import get_model_status
 
 
 client = TestClient(app)
@@ -50,20 +55,77 @@ class TestTerraSpectraAPI(unittest.TestCase):
         self.assertEqual(data["framework"], "PyTorch")
         self.assertEqual(data["framework_version"], "2.15.0")
         self.assertEqual(data["device"], "cpu")
-        self.assertEqual(
-            data["models"]["3d_cnn"]["status"],
-            "awaiting_model_files",
-        )
-        self.assertEqual(
-            data["models"]["vision_transformer"]["status"],
-            "awaiting_model_files",
-        )
+
+        self.assertIn("3d_cnn", data["models"])
+        self.assertIn("vision_transformer", data["models"])
 
     def test_home_endpoint(self):
         response = client.get("/")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["status"], "running")
+
+
+class TestModelService(unittest.TestCase):
+
+    def setUp(self):
+        self.temp_directory = tempfile.TemporaryDirectory()
+        self.model_directory = Path(self.temp_directory.name)
+
+        self.cnn_path = self.model_directory / "cnn3d_best.pth"
+        self.vit_path = self.model_directory / "vit_best.pth"
+
+        self.model_paths = {
+            "3d_cnn": self.cnn_path,
+            "vision_transformer": self.vit_path,
+        }
+
+    def tearDown(self):
+        self.temp_directory.cleanup()
+
+    def test_both_models_missing(self):
+        with patch(
+            "backend.app.services.model_service.MODEL_PATHS",
+            self.model_paths,
+        ):
+            result = get_model_status()
+
+        self.assertEqual(result["status"], "pending")
+        self.assertFalse(result["models"]["3d_cnn"]["available"])
+        self.assertFalse(
+            result["models"]["vision_transformer"]["available"]
+        )
+
+    def test_only_cnn_model_available(self):
+        self.cnn_path.touch()
+
+        with patch(
+            "backend.app.services.model_service.MODEL_PATHS",
+            self.model_paths,
+        ):
+            result = get_model_status()
+
+        self.assertEqual(result["status"], "pending")
+        self.assertTrue(result["models"]["3d_cnn"]["available"])
+        self.assertFalse(
+            result["models"]["vision_transformer"]["available"]
+        )
+
+    def test_both_models_available(self):
+        self.cnn_path.touch()
+        self.vit_path.touch()
+
+        with patch(
+            "backend.app.services.model_service.MODEL_PATHS",
+            self.model_paths,
+        ):
+            result = get_model_status()
+
+        self.assertEqual(result["status"], "checkpoints_available")
+        self.assertTrue(result["models"]["3d_cnn"]["available"])
+        self.assertTrue(
+            result["models"]["vision_transformer"]["available"]
+        )
 
 
 if __name__ == "__main__":
