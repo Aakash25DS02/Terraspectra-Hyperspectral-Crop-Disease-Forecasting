@@ -5,7 +5,10 @@ export const farmZones = [
     risk: 'healthy',
     disease: 'Low',
     status: 'Healthy',
-    area: 250
+    area: 250,
+    crop: 'Maize',
+    confidence: 96,
+    timestamp: '2026-11-21T08:00:00'
   },
   {
     zone: 'Zone B',
@@ -13,7 +16,10 @@ export const farmZones = [
     risk: 'moderate',
     disease: 'Moderate',
     status: 'Requires Monitoring',
-    area: 250
+    area: 250,
+    crop: 'Maize',
+    confidence: 91,
+    timestamp: '2026-11-21T08:00:00'
   },
   {
     zone: 'Zone C',
@@ -21,7 +27,10 @@ export const farmZones = [
     risk: 'high',
     disease: 'High',
     status: 'Requires Attention',
-    area: 250
+    area: 250,
+    crop: 'Maize',
+    confidence: 94,
+    timestamp: '2026-11-21T08:00:00'
   },
   {
     zone: 'Zone D',
@@ -29,6 +38,9 @@ export const farmZones = [
     risk: 'healthy',
     disease: 'Low',
     status: 'Healthy',
-    area: 250
+    area: 250,
+    crop: 'Maize',
+    confidence: 97,
+    timestamp: '2026-11-21T08:00:00'
   }
 ]
