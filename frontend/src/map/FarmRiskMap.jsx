@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import Map from 'react-map-gl/mapbox'
 import DeckGL from '@deck.gl/react'
-import { GeoJsonLayer } from '@deck.gl/layers'
+import { GeoJsonLayer, TextLayer } from '@deck.gl/layers'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { farmZones } from '../data/farmData'
 
@@ -47,16 +47,16 @@ const zoneGeometry = {
     ]
   ]
 }
-function getRiskColor (risk) {
-  if (risk === 'high') {
-    return [220, 70, 70, 150]
+function getRiskColor (score) {
+  if (score >= 80) {
+    return [220, 60, 60, 190]
   }
 
-  if (risk === 'moderate') {
-    return [230, 180, 50, 150]
+  if (score >= 50) {
+    return [240, 180, 50, 180]
   }
 
-  return [70, 160, 90, 150]
+  return [60, 170, 90, 160]
 }
 
 export default function FarmRiskMap ({
@@ -114,9 +114,7 @@ export default function FarmRiskMap ({
     return [
       new GeoJsonLayer({
         id: 'farm-risk-zones',
-
         data: filteredZones,
-
         filled: true,
         stroked: true,
 
@@ -128,7 +126,7 @@ export default function FarmRiskMap ({
             return [50, 120, 220, 210]
           }
 
-          return getRiskColor(feature.properties.risk)
+          return getRiskColor(feature.properties.score)
         },
 
         getLineColor: feature => {
@@ -154,7 +152,6 @@ export default function FarmRiskMap ({
         },
 
         lineWidthMinPixels: 2,
-
         pickable: true,
 
         onClick: ({ object }) => {
@@ -162,9 +159,40 @@ export default function FarmRiskMap ({
             setSelectedZone(object)
           }
         }
+      }),
+
+      new TextLayer({
+        id: 'farm-risk-labels',
+        data: filteredZones.features,
+        pickable: false,
+
+        getPosition: feature => {
+          const coordinates = feature.geometry.coordinates[0]
+
+          const longitude =
+            coordinates.reduce((sum, coordinate) => sum + coordinate[0], 0) /
+            coordinates.length
+
+          const latitude =
+            coordinates.reduce((sum, coordinate) => sum + coordinate[1], 0) /
+            coordinates.length
+
+          return [longitude, latitude]
+        },
+
+        getText: feature =>
+          `${feature.properties.zone} ${feature.properties.score}%`,
+
+        getSize: 15,
+        getColor: [255, 255, 255, 255],
+        getTextAnchor: 'middle',
+        getAlignmentBaseline: 'center',
+        fontWeight: 'bold',
+        backgroundColor: [0, 0, 0, 110],
+        backgroundPadding: [3, 2]
       })
     ]
-  }, [selectedZone, riskFilter, minRiskScore])
+  }, [selectedZone, filteredZones])
 
   const initialViewState = {
     longitude: 76.91,
@@ -285,7 +313,7 @@ export default function FarmRiskMap ({
       {/* Risk Legend */}
 
       <div className='map-overlay'>
-        <h4>Farm Disease Risk</h4>
+        <h4>Disease Risk Heatmap</h4>
 
         <div className='legend-item'>
           <span className='legend-color healthy'></span>
