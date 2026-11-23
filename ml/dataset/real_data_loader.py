@@ -9,7 +9,12 @@ from torch.utils.data import Dataset, DataLoader
 
 
 class RealHyperspectralDataset(Dataset):
-    def __init__(self, manifest_path):
+    def __init__(
+        self,
+        manifest_path,
+        normalization="fixed",
+        stats_path=None
+    ):
         self.manifest_path = Path(manifest_path)
 
         with self.manifest_path.open(newline="") as f:
@@ -17,6 +22,39 @@ class RealHyperspectralDataset(Dataset):
 
         if not self.rows:
             raise ValueError("Manifest is empty")
+
+        if normalization not in ("fixed", "per_band"):
+            raise ValueError(
+                f"Unknown normalization: {normalization}"
+            )
+
+        self.normalization = normalization
+        self.mean = None
+        self.std = None
+
+        if normalization == "per_band":
+            if stats_path is None:
+                raise ValueError(
+                    "stats_path is required for per_band"
+                )
+
+            with np.load(stats_path, allow_pickle=False) as stats:
+                self.mean = stats["mean"].astype(np.float32)
+                self.std = stats["std"].astype(np.float32)
+
+            if self.mean.shape != (125,) or self.std.shape != (125,):
+                raise ValueError(
+                    "Expected 125 normalization values"
+                )
+
+            if (
+                not np.isfinite(self.mean).all()
+                or not np.isfinite(self.std).all()
+                or np.any(self.std <= 0)
+            ):
+                raise ValueError(
+                    "Invalid normalization statistics"
+                )
 
     def __len__(self):
         return len(self.rows)
@@ -52,9 +90,16 @@ class RealHyperspectralDataset(Dataset):
         if not np.isfinite(image).all() or not np.any(image):
             raise ValueError(f"Invalid image: {path}")
 
-        image = image / 65535.0
+        if self.normalization == "fixed":
+            image = image / 65535.0
+        else:
+            image = (
+                image - self.mean[:, None, None]
+            ) / self.std[:, None, None]
 
-        image = torch.from_numpy(image).unsqueeze(0)
+        image = torch.from_numpy(
+            np.ascontiguousarray(image)
+        ).unsqueeze(0)
         label = torch.tensor(int(row["class_id"]), dtype=torch.long)
 
         return image, label

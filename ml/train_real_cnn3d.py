@@ -31,12 +31,33 @@ device = torch.device(
 # Load real hyperspectral dataset
 root = Path("data/real/kaggle_2026")
 
+stats_path = root / "band_normalization.npz"
+
+if not stats_path.exists():
+    raise FileNotFoundError(
+        f"Normalization statistics missing: {stats_path}"
+    )
+
+with np.load(stats_path, allow_pickle=False) as stats:
+    band_mean = stats["mean"].astype(np.float32)
+    band_std = stats["std"].astype(np.float32)
+
+assert band_mean.shape == (125,)
+assert band_std.shape == (125,)
+assert np.isfinite(band_mean).all()
+assert np.isfinite(band_std).all()
+assert (band_std > 0).all()
+
 train_dataset = RealHyperspectralDataset(
-    root / "train_manifest.csv"
+    root / "train_manifest.csv",
+    normalization="per_band",
+    stats_path=stats_path
 )
 
 val_dataset = RealHyperspectralDataset(
-    root / "val_manifest.csv"
+    root / "val_manifest.csv",
+    normalization="per_band",
+    stats_path=stats_path
 )
 
 train_loader = DataLoader(
@@ -72,7 +93,7 @@ checkpoint_dir = Path("checkpoints/real")
 checkpoint_dir.mkdir(parents=True, exist_ok=True)
 
 checkpoint_path = (
-    checkpoint_dir / "cnn3d_wheat_20epochs_best.pth"
+    checkpoint_dir / "cnn3d_wheat_standardized_best.pth"
 )
 
 best_val_accuracy = -1.0
@@ -86,6 +107,8 @@ print("Validation images:", len(val_dataset))
 print("Epochs:", EPOCHS)
 print("Batch size:", BATCH_SIZE)
 print("Learning rate:", LEARNING_RATE)
+print("Normalization: per_band (training-set statistics)")
+print("Normalization bands:", len(band_mean))
 
 # Training loop
 for epoch in range(EPOCHS):
@@ -169,7 +192,9 @@ for epoch in range(EPOCHS):
             "num_bands": 125,
             "patch_size": 32,
             "class_names": ["Healthy", "Rust", "Other"],
-            "normalization": "divide_by_65535",
+            "normalization": "per_band",
+            "band_mean": band_mean,
+            "band_std": band_std,
             "epoch": best_epoch,
             "val_accuracy": val_accuracy,
         }, checkpoint_path)
