@@ -2,7 +2,9 @@
 from fastapi import APIRouter
 
 from ml.preprocessing.dataset_loader import get_dataset_info
+
 from backend.app.services.model_service import get_model_status
+from backend.app.services.dataset_validation_service import validate_dataset
 
 
 router = APIRouter()
@@ -50,6 +52,11 @@ def dataset_information():
         "status": "success",
         "dataset": get_dataset_info(),
     }
+
+
+@router.get("/api/v1/dataset/validate")
+def dataset_validation():
+    return validate_dataset()
 
 
 @router.get("/api/v1/model/status")

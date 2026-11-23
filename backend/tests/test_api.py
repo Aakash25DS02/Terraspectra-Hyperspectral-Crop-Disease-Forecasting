@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 
 from backend.app.main import app
 from backend.app.services.model_service import get_model_status
+from backend.app.services.dataset_validation_service import validate_dataset
 
 
 client = TestClient(app)
@@ -44,6 +45,39 @@ class TestTerraSpectraAPI(unittest.TestCase):
 
         self.assertEqual(data["total_samples"], 500)
         self.assertEqual(data["spectral_bands"], 100)
+
+    def test_dataset_validation(self):
+        response = client.get("/api/v1/dataset/validate")
+
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+
+        self.assertEqual(data["status"], "valid")
+        self.assertTrue(data["valid"])
+        self.assertEqual(data["errors"], [])
+
+        self.assertTrue(
+            all(data["checks"].values())
+        )
+
+    def test_dataset_validation_endpoint_structure(self):
+        response = client.get("/api/v1/dataset/validate")
+
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+
+        self.assertIn("status", data)
+        self.assertIn("valid", data)
+        self.assertIn("checks", data)
+        self.assertIn("details", data)
+        self.assertIn("errors", data)
+
+        self.assertEqual(
+            data["details"]["image_shape"],
+            [500, 64, 64, 100]
+        )
 
     def test_model_status(self):
         response = client.get("/api/v1/model/status")
@@ -125,6 +159,38 @@ class TestModelService(unittest.TestCase):
         self.assertTrue(result["models"]["3d_cnn"]["available"])
         self.assertTrue(
             result["models"]["vision_transformer"]["available"]
+        )
+
+
+class TestDatasetValidationService(unittest.TestCase):
+
+    def test_dataset_validation(self):
+        result = validate_dataset()
+
+        self.assertEqual(result["status"], "valid")
+        self.assertTrue(result["valid"])
+        self.assertEqual(result["errors"], [])
+
+        self.assertTrue(
+            all(result["checks"].values())
+        )
+
+    def test_dataset_dimensions(self):
+        result = validate_dataset()
+
+        self.assertEqual(
+            result["details"]["image_shape"],
+            [500, 64, 64, 100]
+        )
+
+        self.assertEqual(
+            result["details"]["label_shape"],
+            [500]
+        )
+
+        self.assertEqual(
+            result["details"]["wavelength_shape"],
+            [100]
         )
 
 
