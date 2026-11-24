@@ -67,6 +67,7 @@ export default function FarmRiskMap ({
   const [selectedZone, setSelectedZone] = useState(null)
   const [riskFilter, setRiskFilter] = useState('all')
   const [minRiskScore, setMinRiskScore] = useState(0)
+  const [cropFilter, setCropFilter] = useState('all')
   useEffect(() => {
     setRiskFilter(externalRiskFilter)
   }, [externalRiskFilter])
@@ -78,7 +79,11 @@ export default function FarmRiskMap ({
       risk: zone.risk,
       score: zone.score,
       disease: zone.disease,
-      status: zone.status
+      status: zone.status,
+      area: zone.area,
+      crop: zone.crop,
+      confidence: zone.confidence,
+      timestamp: zone.timestamp
     },
     geometry: {
       type: 'Polygon',
@@ -106,7 +111,10 @@ export default function FarmRiskMap ({
 
       const matchesScore = feature.properties.score >= minRiskScore
 
-      return matchesRisk && matchesScore
+      const matchesCrop =
+        cropFilter === 'all' || feature.properties.crop === cropFilter
+
+      return matchesRisk && matchesScore && matchesCrop
     })
   }
 
@@ -264,6 +272,34 @@ export default function FarmRiskMap ({
             🔴 High
           </button>
         </div>
+        <div className='crop-filter'>
+          <div className='risk-score-header'>
+            <span>Crop Type</span>
+            <strong>{cropFilter === 'all' ? 'All Crops' : cropFilter}</strong>
+          </div>
+
+          <div className='risk-filter-buttons'>
+            <button
+              className={cropFilter === 'all' ? 'active' : ''}
+              onClick={() => {
+                setCropFilter('all')
+                setSelectedZone(null)
+              }}
+            >
+              All Crops
+            </button>
+
+            <button
+              className={cropFilter === 'Maize' ? 'active' : ''}
+              onClick={() => {
+                setCropFilter('Maize')
+                setSelectedZone(null)
+              }}
+            >
+              🌽 Maize
+            </button>
+          </div>
+        </div>
         <div className='risk-score-filter'>
           <div className='risk-score-header'>
             <span>Minimum Risk Score</span>
@@ -293,6 +329,7 @@ export default function FarmRiskMap ({
           onClick={() => {
             setRiskFilter('all')
             setMinRiskScore(0)
+            setCropFilter('all')
             setSelectedZone(null)
           }}
         >
