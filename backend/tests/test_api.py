@@ -36,6 +36,19 @@ class TestTerraSpectraAPI(unittest.TestCase):
         self.assertEqual(data["spectral_bands"], 100)
         self.assertEqual(data["number_of_classes"], 5)
 
+    def test_dashboard_summary_when_dataset_missing(self):
+        with patch(
+            "backend.app.routes.api.get_dataset_info",
+            side_effect=FileNotFoundError("Dataset missing"),
+        ):
+            response = client.get("/api/v1/dashboard/summary")
+
+        self.assertEqual(response.status_code, 503)
+        self.assertEqual(
+            response.json()["detail"],
+            "Dataset is unavailable or could not be read.",
+        )
+
     def test_dataset_information(self):
         response = client.get("/api/v1/dataset/info")
 
@@ -45,6 +58,19 @@ class TestTerraSpectraAPI(unittest.TestCase):
 
         self.assertEqual(data["total_samples"], 500)
         self.assertEqual(data["spectral_bands"], 100)
+
+    def test_dataset_information_when_dataset_missing(self):
+        with patch(
+            "backend.app.routes.api.get_dataset_info",
+            side_effect=FileNotFoundError("Dataset missing"),
+        ):
+            response = client.get("/api/v1/dataset/info")
+
+        self.assertEqual(response.status_code, 503)
+        self.assertEqual(
+            response.json()["detail"],
+            "Dataset is unavailable or could not be read.",
+        )
 
     def test_dataset_validation(self):
         response = client.get("/api/v1/dataset/validate")
@@ -57,9 +83,7 @@ class TestTerraSpectraAPI(unittest.TestCase):
         self.assertTrue(data["valid"])
         self.assertEqual(data["errors"], [])
 
-        self.assertTrue(
-            all(data["checks"].values())
-        )
+        self.assertTrue(all(data["checks"].values()))
 
     def test_dataset_validation_endpoint_structure(self):
         response = client.get("/api/v1/dataset/validate")
@@ -171,9 +195,7 @@ class TestDatasetValidationService(unittest.TestCase):
         self.assertTrue(result["valid"])
         self.assertEqual(result["errors"], [])
 
-        self.assertTrue(
-            all(result["checks"].values())
-        )
+        self.assertTrue(all(result["checks"].values()))
 
     def test_dataset_dimensions(self):
         result = validate_dataset()

@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from ml.preprocessing.dataset_loader import get_dataset_info
 
@@ -8,6 +8,21 @@ from backend.app.services.dataset_validation_service import validate_dataset
 
 
 router = APIRouter()
+
+
+def get_dataset_info_safely():
+    """
+    Retrieve dataset information with controlled error handling.
+    """
+
+    try:
+        return get_dataset_info()
+
+    except (OSError, KeyError, ValueError) as exc:
+        raise HTTPException(
+            status_code=503,
+            detail="Dataset is unavailable or could not be read.",
+        ) from exc
 
 
 @router.get("/")
@@ -29,7 +44,7 @@ def health_check():
 
 @router.get("/api/v1/dashboard/summary")
 def dashboard_summary():
-    dataset = get_dataset_info()
+    dataset = get_dataset_info_safely()
 
     return {
         "project": "TerraSpectra",
@@ -50,7 +65,7 @@ def dashboard_summary():
 def dataset_information():
     return {
         "status": "success",
-        "dataset": get_dataset_info(),
+        "dataset": get_dataset_info_safely(),
     }
 
 
