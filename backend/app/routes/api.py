@@ -11,9 +11,7 @@ router = APIRouter()
 
 
 def get_dataset_info_safely():
-    """
-    Retrieve dataset information with controlled error handling.
-    """
+    """Retrieve dataset information with controlled error handling."""
 
     try:
         return get_dataset_info()
@@ -87,5 +85,23 @@ def model_status():
         "message": (
             "Model checkpoint availability checked successfully. "
             "Trained model loading and inference are not yet configured."
+        ),
+    }
+
+
+@router.get("/api/v1/system/readiness")
+def system_readiness():
+    dataset = validate_dataset()
+    models = get_model_status()
+
+    return {
+        "api_ready": True,
+        "dataset_ready": dataset.get("valid", False),
+        "model_checkpoints_available": (
+            models.get("status") == "checkpoints_available"
+        ),
+        "ml_inference_configured": False,
+        "message": (
+            "Backend is running. ML inference integration is pending."
         ),
     }
