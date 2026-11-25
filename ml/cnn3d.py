@@ -128,10 +128,15 @@ class HyperspectralCNN3D_Simplified(nn.Module):
         self.dropout = nn.Dropout(0.5)
         self.fc2 = nn.Linear(128, num_classes)
         
-    def forward(self, x):
+    def extract_features(self, x):
+        """Extract spatial-spectral features before classification."""
         x = self.pool1(F.relu(self.bn1(self.conv1(x))))
         x = self.pool2(F.relu(self.bn2(self.conv2(x))))
         x = self.pool3(F.relu(self.bn3(self.conv3(x))))
+        return x
+
+    def forward(self, x):
+        x = self.extract_features(x)
         x = x.view(x.size(0), -1)
         x = F.relu(self.fc1(x))
         x = self.dropout(x)
