@@ -410,6 +410,28 @@ export default function FarmRiskMap ({
               <span>Status</span>
               <strong>{selectedZone.properties.status}</strong>
             </div>
+
+            <div>
+              <span>Crop</span>
+              <strong>{selectedZone.properties.crop}</strong>
+            </div>
+
+            <div>
+              <span>AI Confidence</span>
+              <strong>{selectedZone.properties.confidence}%</strong>
+            </div>
+
+            <div>
+              <span>Area</span>
+              <strong>{selectedZone.properties.area} acres</strong>
+            </div>
+
+            <div>
+              <span>Last Updated</span>
+              <strong>
+                {new Date(selectedZone.properties.timestamp).toLocaleString()}
+              </strong>
+            </div>
           </div>
 
           <button
