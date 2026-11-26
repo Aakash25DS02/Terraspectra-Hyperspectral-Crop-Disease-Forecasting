@@ -70,6 +70,29 @@ class TestTerraSpectraAPI(unittest.TestCase):
         self.assertIn("details", data)
         self.assertIn("errors", data)
 
+    def test_dataset_statistics(self):
+        response = client.get("/api/v1/dataset/statistics")
+
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+
+        self.assertEqual(data["status"], "success")
+        self.assertEqual(data["total_samples"], 500)
+        self.assertEqual(data["image_dimensions"]["height"], 64)
+        self.assertEqual(data["image_dimensions"]["width"], 64)
+        self.assertEqual(data["spectral_bands"], 100)
+        self.assertEqual(data["number_of_classes"], 5)
+
+        self.assertIn("class_statistics", data)
+
+        total_class_samples = sum(
+            item["samples"]
+            for item in data["class_statistics"].values()
+        )
+
+        self.assertEqual(total_class_samples, 500)
+
     def test_model_status(self):
         response = client.get("/api/v1/model/status")
         self.assertEqual(response.status_code, 200)

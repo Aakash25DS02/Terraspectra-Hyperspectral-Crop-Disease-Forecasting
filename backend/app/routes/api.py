@@ -105,3 +105,32 @@ def system_readiness():
             "Backend is running. ML inference integration is pending."
         ),
     }
+
+
+@router.get("/api/v1/dataset/statistics")
+def dataset_statistics():
+    dataset = get_dataset_info_safely()
+
+    total_samples = dataset["total_samples"]
+
+    class_statistics = {
+        class_name: {
+            "samples": count,
+            "percentage": round(
+                (count / total_samples) * 100, 2
+            ) if total_samples else 0,
+        }
+        for class_name, count in dataset["class_distribution"].items()
+    }
+
+    return {
+        "status": "success",
+        "total_samples": total_samples,
+        "image_dimensions": {
+            "height": dataset["image_height"],
+            "width": dataset["image_width"],
+        },
+        "spectral_bands": dataset["spectral_bands"],
+        "number_of_classes": len(dataset["classes"]),
+        "class_statistics": class_statistics,
+    }
