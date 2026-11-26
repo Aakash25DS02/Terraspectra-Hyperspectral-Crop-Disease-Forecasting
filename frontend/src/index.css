@@ -901,6 +901,31 @@ button {
   margin-top: 10px;
 }
 
+.risk-assessment {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 10px;
+  background: rgba(240, 245, 240, 0.9);
+  border: 1px solid rgba(80, 120, 90, 0.15);
+}
+
+.risk-assessment span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.risk-assessment p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #374151;
+}
+
 .zone-ai-button {
   width: 100%;
   margin-top: 15px;

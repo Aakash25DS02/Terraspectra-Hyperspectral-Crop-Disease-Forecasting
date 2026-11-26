@@ -400,6 +400,18 @@ export default function FarmRiskMap ({
             </div>
           </div>
 
+          <div className='risk-assessment'>
+            <span>Risk Assessment</span>
+
+            <p>
+              {selectedZone.properties.score >= 80
+                ? 'This zone has a high disease risk and requires immediate monitoring.'
+                : selectedZone.properties.score >= 50
+                  ? 'This zone has a moderate disease risk and should be monitored regularly.'
+                  : 'This zone currently shows low disease risk and is considered healthy.'}
+            </p>
+          </div>
+
           <div className='zone-info'>
             <div>
               <span>Disease Risk</span>
