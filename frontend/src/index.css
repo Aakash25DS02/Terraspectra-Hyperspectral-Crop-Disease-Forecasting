@@ -1212,6 +1212,40 @@ button {
   gap: 10px;
 }
 
+.zone-score-chart {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 180px;
+}
+
+.zone-score-track {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: #e8eee9;
+  overflow: hidden;
+}
+
+.zone-score-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.zone-score-fill.healthy {
+  background: #4ca866;
+}
+
+.zone-score-fill.moderate {
+  background: #e7b32f;
+}
+
+.zone-score-fill.high {
+  background: #df454b;
+}
+
 .zone-score-item {
   display: flex;
   justify-content: space-between;
@@ -1302,4 +1336,16 @@ button {
 
 .risk-bar-item.clickable:hover .risk-bar-label strong {
   color: #365c3d;
+}
+
+.map-section:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  padding: 20px;
+  background: #f4f7f5;
+  overflow: auto;
+}
+
+.map-section:fullscreen .farm-map {
+  height: calc(100vh - 100px);
 }

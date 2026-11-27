@@ -122,9 +122,14 @@ export default function FarmRiskMap ({
     return [
       new GeoJsonLayer({
         id: 'farm-risk-zones',
+
         data: filteredZones,
+
         filled: true,
+
         stroked: true,
+
+        pickable: true,
 
         getFillColor: feature => {
           if (
@@ -160,7 +165,6 @@ export default function FarmRiskMap ({
         },
 
         lineWidthMinPixels: 2,
-        pickable: true,
 
         onClick: ({ object }) => {
           if (object) {
@@ -171,7 +175,9 @@ export default function FarmRiskMap ({
 
       new TextLayer({
         id: 'farm-risk-labels',
+
         data: filteredZones.features,
+
         pickable: false,
 
         getPosition: feature => {
@@ -189,15 +195,29 @@ export default function FarmRiskMap ({
         },
 
         getText: feature =>
-          `${feature.properties.zone} ${feature.properties.score}%`,
+          `${feature.properties.zone} - ${feature.properties.score}%`,
 
-        getSize: 15,
+        getSize: 18,
+
         getColor: [255, 255, 255, 255],
+
         getTextAnchor: 'middle',
+
         getAlignmentBaseline: 'center',
+
         fontWeight: 'bold',
-        backgroundColor: [0, 0, 0, 110],
-        backgroundPadding: [3, 2]
+
+        backgroundColor: [0, 0, 0, 230],
+
+        backgroundPadding: [8, 5],
+
+        billboard: true,
+
+        sizeUnits: 'pixels',
+
+        sizeMinPixels: 18,
+
+        sizeMaxPixels: 24
       })
     ]
   }, [selectedZone, filteredZones])
@@ -407,8 +427,8 @@ export default function FarmRiskMap ({
               {selectedZone.properties.score >= 80
                 ? 'This zone has a high disease risk and requires immediate monitoring.'
                 : selectedZone.properties.score >= 50
-                  ? 'This zone has a moderate disease risk and should be monitored regularly.'
-                  : 'This zone currently shows low disease risk and is considered healthy.'}
+                ? 'This zone has a moderate disease risk and should be monitored regularly.'
+                : 'This zone currently shows low disease risk and is considered healthy.'}
             </p>
           </div>
 

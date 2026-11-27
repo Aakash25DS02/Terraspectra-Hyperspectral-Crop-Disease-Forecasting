@@ -71,7 +71,7 @@ export default function RiskAnalytics ({
 
       <div className='analytics-grid'>
 
-        {/* Risk Distribution */}
+        {/* Risk Distribution Chart */}
 
         <div className='analytics-card'>
 
@@ -95,7 +95,7 @@ export default function RiskAnalytics ({
                   </span>
 
                   <strong>
-                    {item.value} zones
+                    {item.value} zones · {item.percentage}%
                   </strong>
 
                 </div>
@@ -118,7 +118,7 @@ export default function RiskAnalytics ({
 
         </div>
 
-        {/* Zone Risk Scores */}
+        {/* Zone Risk Score Chart */}
 
         <div className='analytics-card'>
 
@@ -134,7 +134,7 @@ export default function RiskAnalytics ({
                 onClick={() => onZoneSelect(zone.zone)}
               >
 
-                <div>
+                <div className='zone-score-info'>
 
                   <strong>
                     {zone.zone}
@@ -146,8 +146,23 @@ export default function RiskAnalytics ({
 
                 </div>
 
-                <div className='score-value'>
-                  {zone.score}%
+                <div className='zone-score-chart'>
+
+                  <div className='zone-score-track'>
+
+                    <div
+                      className={`zone-score-fill ${zone.risk.toLowerCase()}`}
+                      style={{
+                        width: `${zone.score}%`
+                      }}
+                    ></div>
+
+                  </div>
+
+                  <div className='score-value'>
+                    {zone.score}%
+                  </div>
+
                 </div>
 
               </div>
